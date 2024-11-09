@@ -3,11 +3,19 @@
 
 App::App() : wasCrossPressed(false)
 {
+    srand(time(0));
     mRenderer = new Renderer();
     mRenderer->Init();
 
     mPlayer = new Player();
-    mPlayer->UpdateVelocity(0);
+
+    int initialAsteroidCount = 4;
+    for (size_t i = 0; i < initialAsteroidCount; i++)
+    {
+        mAsteroids.push_back(new Asteroid());
+    }
+
+    mProjectile = new Projectile();
 
     xButton = new Button(SCE_CTRL_CROSS);
     oButton = new Button(SCE_CTRL_CIRCLE);
@@ -27,14 +35,6 @@ App::App() : wasCrossPressed(false)
 
     textRenderer = new TextRenderer(mRenderer->GetRenderer(), "res/Orbitron-Regular.ttf", 24);
     mIsDebug = false;
-}
-
-App::~App()
-{
-    delete textRenderer;
-    delete mColour;
-
-    delete mRenderer;
 }
 
 void App::processInput()
@@ -75,20 +75,33 @@ void App::handleButtonPress(SceCtrlData &padData)
 void App::run()
 {
     processInput();
+#pragma region Main rendering
     mRenderer->Render();
 
-    mPlayer->UpdatePosition(mDirections.up);
-    mPlayer->DrawWithRot(mRenderer);
+    mPlayer->UpdatePosition();
+    mPlayer->Draw(mRenderer);
 
+    for (auto &asteroid : mAsteroids)
+    {
+        asteroid->UpdatePosition();
+        asteroid->Draw(mRenderer);
+    }
+
+    mProjectile->UpdatePosition();
+        mProjectile->Draw(mRenderer);
+
+#pragma endregion
+
+#pragma region Boundary drawing
     SDL_SetRenderDrawColor(mRenderer->GetRenderer(), 255, 0, 0, 255);
     SDL_RenderDrawLine(mRenderer->GetRenderer(), 0, SCREEN_HEIGHT, 0, 0);                                    // Line from bottom-left to top-left
     SDL_RenderDrawLine(mRenderer->GetRenderer(), 0, 0, SCREEN_WIDTH, 0);                                     // Line from top-left to top-right
     SDL_RenderDrawLine(mRenderer->GetRenderer(), SCREEN_WIDTH - 1, 0, SCREEN_WIDTH, SCREEN_HEIGHT);          // Line from top-right to bottom-right
     SDL_RenderDrawLine(mRenderer->GetRenderer(), SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1, 0, SCREEN_HEIGHT - 1); // Line from bottom-right to bottom-left
+#pragma endregion
 
     SDL_Color textColor = {255, 255, 255};
-
-    textRenderer->renderText("Hello, PS Vita!", 50, 50, textColor);
+    textRenderer->renderText("000", 10, 10, textColor);
 
 #pragma region Debug printing
     if (mIsDebug)
@@ -108,4 +121,29 @@ void App::run()
     }
 #pragma endregion
     mRenderer->EndRender();
+}
+
+App::~App()
+{
+    for (auto &asteroid : mAsteroids)
+    {
+        delete asteroid;
+    }
+    delete mPlayer;
+
+    delete xButton;
+    delete oButton;
+    delete triButton;
+    delete squButton;
+    delete DLButton;
+    delete DRButton;
+    delete DUButton;
+    delete DDButton;
+
+    delete Select;
+
+    delete textRenderer;
+    delete mColour;
+
+    delete mRenderer;
 }

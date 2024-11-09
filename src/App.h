@@ -14,8 +14,11 @@
 #include "Renderer.h"
 
 #include "Player.h"
+#include "Asteroid.h"
+#include "Projectile.h"
 
-struct Directions {
+struct Directions
+{
     Vector2f up;    // (0, -1)
     Vector2f down;  // (0, 1)
     Vector2f left;  // (-1, 0)
@@ -23,7 +26,8 @@ struct Directions {
 
     Directions()
         : up(0, -1), down(0, 1), left(-1, 0), right(1, 0)
-    {}
+    {
+    }
 };
 
 class App
@@ -31,10 +35,14 @@ class App
     Directions mDirections;
 
     Vector3f *mColour;
-    Player* mPlayer;
+    Player *mPlayer;
 
-Renderer* mRenderer;
+    std::vector<Asteroid *> mAsteroids;
+    Projectile* mProjectile;
 
+
+
+    Renderer *mRenderer;
 
     SDL_GameController *controller;
     bool mIsRunning;
@@ -60,21 +68,25 @@ Renderer* mRenderer;
     Button *DUButton;
     Button *DDButton;
 
-    Button* Select;
+    Button *Select;
 
-    TextRenderer* textRenderer;
+    TextRenderer *textRenderer;
 
     bool mIsDebug;
 
-float stickVal;
-
+    float stickVal;
 
 public:
     App();
     ~App();
     void run();          // Run once per frame
     void processInput(); // Process user input (e.g., keyboard or controller)
-    void SetColour(float r, float g, float b) { mRenderer->GetColour()->SetX(r); mRenderer->GetColour()->SetY(g);mRenderer->GetColour()->SetZ(b);}
+    void SetColour(float r, float g, float b)
+    {
+        mRenderer->GetColour()->SetX(r);
+        mRenderer->GetColour()->SetY(g);
+        mRenderer->GetColour()->SetZ(b);
+    }
     const bool GetRunning() { return mIsRunning; }
     void handleButtonPress(SceCtrlData &padData); // Function to handle specific button press
 };

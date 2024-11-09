@@ -79,6 +79,48 @@ void Model::ApplyFriction(const float pFric)
     mVelocity->SetY(mVelocity->GetY() * pFric);
 }
 
+  void Model::Draw(Renderer *pRenderer)
+  {
+    Vector2f modelCenter(0, 0);
+    for (const auto &vertex : mVerts)
+    {
+        modelCenter.SetX(modelCenter.GetX() + vertex.x);
+        modelCenter.SetY(modelCenter.GetY() + vertex.y);
+    }
+    modelCenter.SetX(modelCenter.GetX() / mVerts.size());
+    modelCenter.SetY(modelCenter.GetY() / mVerts.size());
+
+    std::vector<SDL_Point> rotatedVertices;
+    for (const auto &vertex : mVerts)
+    {
+        SDL_Point rotated = rotatePoint(vertex, &modelCenter, mRotAngle);
+        rotated.x = mPosition->GetX() + rotated.x * mScale;
+        rotated.y = mPosition->GetY() + rotated.y * mScale;
+        rotatedVertices.push_back(rotated);
+    }
+
+    SDL_SetRenderDrawColor(pRenderer->GetRenderer(), 255, 255, 255, 255);
+    for (size_t i = 0; i < rotatedVertices.size(); ++i)
+    {
+        SDL_RenderDrawLine(pRenderer->GetRenderer(),
+                           rotatedVertices[i].x, rotatedVertices[i].y,
+                           rotatedVertices[(i + 1) % rotatedVertices.size()].x,
+                           rotatedVertices[(i + 1) % rotatedVertices.size()].y);
+    }
+  }
+
+
+void Model::UpdatePosition()
+{
+    mPosition->SetX(mPosition->GetX() + mVelocity->GetX());
+    mPosition->SetY(mPosition->GetY() + mVelocity->GetY());
+    
+    ApplyFriction(mFriction);
+    CheckBounds();
+}
+
+
+
 Model::~Model()
 {
     delete mPosition;

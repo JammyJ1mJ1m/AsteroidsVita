@@ -43,6 +43,10 @@ src/Renderer.h
         src/Button.h
         src/TextRenderer.cpp
         src/TextRenderer.h
+        src/Asteroid.cpp
+        src/Asteroid.h
+        src/Projectile.cpp
+        src/Projectile.h
 )
 
 target_link_libraries(${PROJECT_NAME}
