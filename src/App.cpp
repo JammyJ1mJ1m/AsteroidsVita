@@ -1,5 +1,5 @@
 #include "App.h"
-#include <psp2/ctrl.h> 
+#include <psp2/ctrl.h>
 
 App::App() : wasCrossPressed(false)
 {
@@ -7,6 +7,7 @@ App::App() : wasCrossPressed(false)
     mRenderer->Init();
 
     mPlayer = new Player();
+    mPlayer->UpdateVelocity(0);
 
     xButton = new Button(SCE_CTRL_CROSS);
     oButton = new Button(SCE_CTRL_CIRCLE);
@@ -39,16 +40,16 @@ App::~App()
 void App::processInput()
 {
     SceCtrlData padData;
-    sceCtrlSetSamplingMode(SCE_CTRL_MODE_DIGITAL); 
+    sceCtrlSetSamplingMode(SCE_CTRL_MODE_DIGITAL);
 
-    sceCtrlReadBufferPositive(0, &padData, 1); 
+    sceCtrlReadBufferPositive(0, &padData, 1);
 
     handleButtonPress(padData);
 }
 
 void App::handleButtonPress(SceCtrlData &padData)
 {
- 
+
     if (xButton->CheckButtonDown(padData))
         SetColour(rand() % 256, rand() % 256, rand() % 256); // Random RGB color
 
@@ -56,19 +57,13 @@ void App::handleButtonPress(SceCtrlData &padData)
     //     SetColour(255, 0, 0);
 
     if (DLButton->CheckKey(padData))
-        mPlayer->UpdatePosition(mDirections.left);
+        mPlayer->SetRotation(mPlayer->GetRotation() - 3);
 
     if (DRButton->CheckKey(padData))
-        mPlayer->UpdatePosition(mDirections.right);
+        mPlayer->SetRotation(mPlayer->GetRotation() + 3);
 
-    if (DUButton->CheckKey(padData))
-        mPlayer->UpdatePosition(mDirections.up);
-
-    if (DDButton->CheckKey(padData))
-        mPlayer->UpdatePosition(mDirections.down);
-
-    if (triButton->CheckButtonDown(padData))
-        SetColour(0, 0, 255);
+    if (xButton->CheckKey(padData))
+        mPlayer->SetSpeed(1);
 
     if (Select->CheckButtonDown(padData))
         mIsDebug = !mIsDebug;
@@ -82,7 +77,8 @@ void App::run()
     processInput();
     mRenderer->Render();
 
-    mPlayer->Draw(mRenderer);
+    mPlayer->UpdatePosition(mDirections.up);
+    mPlayer->DrawWithRot(mRenderer);
 
     SDL_SetRenderDrawColor(mRenderer->GetRenderer(), 255, 0, 0, 255);
     SDL_RenderDrawLine(mRenderer->GetRenderer(), 0, SCREEN_HEIGHT, 0, 0);                                    // Line from bottom-left to top-left
@@ -94,6 +90,7 @@ void App::run()
 
     textRenderer->renderText("Hello, PS Vita!", 50, 50, textColor);
 
+#pragma region Debug printing
     if (mIsDebug)
     {
         textRenderer->renderText(xButton->GetState().c_str(), 50, 100, textColor);
@@ -102,8 +99,13 @@ void App::run()
         std::string t1 = "Pos: " + std::to_string(x) + " : " + std::to_string(y);
         textRenderer->renderText(t1.c_str(), 50, 150, textColor);
 
+        float r = mPlayer->GetRotation();
+        std::string t2 = "Rot: " + std::to_string(r);
+        textRenderer->renderText(t2.c_str(), 50, 200, textColor);
+
         SDL_SetRenderDrawColor(mRenderer->GetRenderer(), 255, 0, 255, 255);
         SDL_RenderDrawPoint(mRenderer->GetRenderer(), static_cast<int>(x), static_cast<int>(y)); // Convert to integer since pixel coordinates are integers
     }
+#pragma endregion
     mRenderer->EndRender();
 }

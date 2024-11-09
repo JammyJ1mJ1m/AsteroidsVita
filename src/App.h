@@ -21,7 +21,6 @@ struct Directions {
     Vector2f left;  // (-1, 0)
     Vector2f right; // (1, 0)
 
-    // Constructor to initialize the directions
     Directions()
         : up(0, -1), down(0, 1), left(-1, 0), right(1, 0)
     {}
@@ -35,9 +34,6 @@ class App
     Player* mPlayer;
 
 Renderer* mRenderer;
-
-    // SDL_Renderer *renderer;
-    // SDL_Window *window;
 
 
     SDL_GameController *controller;
@@ -71,7 +67,7 @@ Renderer* mRenderer;
     bool mIsDebug;
 
 float stickVal;
-    // std::unordered_map<int, bool> buttonState;
+
 
 public:
     App();
