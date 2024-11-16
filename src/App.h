@@ -17,6 +17,12 @@
 #include "Asteroid.h"
 #include "Projectile.h"
 
+struct Star
+{
+    Vector2f pos;
+    Vector3f col;
+};
+
 struct Directions
 {
     Vector2f up;    // (0, -1)
@@ -38,8 +44,9 @@ class App
     Player *mPlayer;
 
     std::vector<Asteroid *> mAsteroids;
-    Projectile* mProjectile;
 
+
+std::vector<Projectile*> mProjectiles;
 
 
     Renderer *mRenderer;
@@ -75,12 +82,15 @@ class App
     bool mIsDebug;
 
     float stickVal;
+    int indexer;
+    std::vector<Star> mBGStars;
 
 public:
     App();
+    void CreateAsteroids();
     ~App();
-    void run();          // Run once per frame
-    void processInput(); // Process user input (e.g., keyboard or controller)
+    void run(const float pDeltaTime);          
+    void processInput(); 
     void SetColour(float r, float g, float b)
     {
         mRenderer->GetColour()->SetX(r);
@@ -88,5 +98,6 @@ public:
         mRenderer->GetColour()->SetZ(b);
     }
     const bool GetRunning() { return mIsRunning; }
-    void handleButtonPress(SceCtrlData &padData); // Function to handle specific button press
+    void handleButtonPress(SceCtrlData &padData);
+    void CheckCollisions();
 };

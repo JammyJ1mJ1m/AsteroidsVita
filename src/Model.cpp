@@ -63,13 +63,13 @@ void Model::UpdateVelocity(float speed)
     mVelocity->SetX(mVelocity->GetX() + forward.GetX() * speed);
     mVelocity->SetY(mVelocity->GetY() + forward.GetY() * speed);
 
-    mVelocity->ClampLength(5);
+    mVelocity->ClampLength(mMaxSpeed);
 }
 
 void Model::SetSpeed(const float pSpeed)
 {
     mSpeed = pSpeed;
-    UpdateVelocity(mSpeed); 
+    UpdateVelocity(mSpeed);
 }
 
 void Model::ApplyFriction(const float pFric)
@@ -79,8 +79,8 @@ void Model::ApplyFriction(const float pFric)
     mVelocity->SetY(mVelocity->GetY() * pFric);
 }
 
-  void Model::Draw(Renderer *pRenderer)
-  {
+void Model::Draw(Renderer *pRenderer)
+{
     Vector2f modelCenter(0, 0);
     for (const auto &vertex : mVerts)
     {
@@ -107,21 +107,19 @@ void Model::ApplyFriction(const float pFric)
                            rotatedVertices[(i + 1) % rotatedVertices.size()].x,
                            rotatedVertices[(i + 1) % rotatedVertices.size()].y);
     }
-  }
+}
 
-
-void Model::UpdatePosition()
+void Model::Update(const float pDeltaTime)
 {
     mPosition->SetX(mPosition->GetX() + mVelocity->GetX());
     mPosition->SetY(mPosition->GetY() + mVelocity->GetY());
-    
+
     ApplyFriction(mFriction);
     CheckBounds();
 }
 
-
-
 Model::~Model()
 {
+    delete mVelocity;
     delete mPosition;
 }

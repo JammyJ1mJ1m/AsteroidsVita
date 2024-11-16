@@ -15,6 +15,8 @@
 
 #include "App.h"
 
+#include <chrono>
+
 #define printf psvDebugScreenPrintf
 
 int ConvertToSeconds(const int pTime)
@@ -24,23 +26,25 @@ int ConvertToSeconds(const int pTime)
 
 int main(int argc, char *argv[])
 {
-int targetFPS = 60;
-int frameTime = 1000/targetFPS;
 
-
+  int targetFPS = 60;
+  int frameTime = 1000 / targetFPS;
 
   App app;
+  float dt = 0.0f;
 
-  app.run();
-
-
-
+  auto lastFrameTime = std::chrono::steady_clock::now();
   while (app.GetRunning())
   {
-    app.run(); // Process input and render a frame
+    auto currentFrameTime = std::chrono::steady_clock::now();
+    std::chrono::duration<float> deltaTime = currentFrameTime - lastFrameTime;
+    dt = deltaTime.count();
 
-    // Add a small delay to control the frame rate if needed
-    SDL_Delay(frameTime); // Approximately 60 FPS (1000ms / 60 ≈ 16ms per frame)
+    lastFrameTime = currentFrameTime;
+
+    app.run(dt);
+
+    SDL_Delay(frameTime);
   }
 
   sceKernelExitProcess(0);

@@ -4,6 +4,7 @@
 
 #include "Player.h"
 #include "Renderer.h"
+#include "Projectile.h"
 
 Player::Player()
 {
@@ -17,5 +18,30 @@ Player::Player()
 
     mPosition = new Vector2f(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
     mRotAngle = 0;
+    mMaxSpeed = 5;
+    mHasExpired = false;
+mColliderRadius = 10;
+mLives = 3;
     UpdateVelocity(0);
+}
+
+Projectile *Player::ShootProjectile()
+{
+    mShotProjectiles++;
+    Projectile *proj = new Projectile();
+
+    return proj;
+}
+
+void Player::OnCollision()
+{
+    if (mLives > 1)
+    {
+        mLives--;
+        SetPosition(Vector2f(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2));
+        delete mVelocity;
+        mVelocity = new Vector2f(0,0);
+    }
+    else
+        SetHasExpired(true);
 }

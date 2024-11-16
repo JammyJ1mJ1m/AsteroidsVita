@@ -10,7 +10,7 @@ public:
     TextRenderer(SDL_Renderer* renderer, const char* fontPath, int fontSize);
     ~TextRenderer();
 
-    void renderText(const char* text, int x, int y, SDL_Color color);
+    void renderText(const char* text, int x, int y, SDL_Color color, const bool pIsCentered = false);
 
 private:
     SDL_Renderer* mRenderer;

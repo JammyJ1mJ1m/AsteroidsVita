@@ -29,27 +29,35 @@ protected:
   Vector2f *mVelocity;
   float mSpeed;
   float mFriction;
+  float mMaxSpeed;
+  bool mHasExpired;
+  float mColliderRadius;
 
 public:
   ~Model();
 
+  void SetMaxSpeed(const float pSpeed) { mMaxSpeed = pSpeed; }
+  const float GetMaxSpeed() { return mMaxSpeed; }
+  inline void SetScale(const float pScale) { mScale = pScale; }
+  inline const float GetScale() { return mScale; }
+  Vector2f &GetPos() { return *mPosition; }
+  void SetPosition(Vector2f pPos) { mPosition = new Vector2f(pPos.GetX(), pPos.GetY()); }
+  void SetRotation(const float pAngle);
+  const float GetRotation() { return mRotAngle; }
+  Vector2f GetForwardVector() const;
+  void SetSpeed(const float pSpeed);
   void CheckBounds();
-  void SetScale(float pScale) { mScale = pScale; }
-  
   void Draw(Renderer *pRenderer);
-    Vector2f& GetPos() { return *mPosition;}
-
-  virtual void UpdatePosition();
+  virtual void Update(const float pDeltaTime);
   Vector2f Rotate(const Vector2f &point);
   SDL_Point rotatePoint(SDL_Point point, Vector2f *pivot, double angle);
-  Vector2f GetForwardVector() const;
   void UpdateVelocity(float speed);
-  void SetSpeed(const float pSpeed);
   void ApplyFriction(const float pFric);
-
-  void SetRotation(const float pAngle);
-
-  const float GetRotation() { return mRotAngle; }
+  void SetHasExpired(const bool pHasExpired) { mHasExpired = pHasExpired; };
+  const bool GetHasExpired() { return mHasExpired; }
+  const int GetColliderRadius() { return mColliderRadius; };
+  void SetColliderRadius(const int pRadius) { mColliderRadius = pRadius; }
+  virtual void OnCollision() = 0;
 };
 
 #endif // MODEL_H
