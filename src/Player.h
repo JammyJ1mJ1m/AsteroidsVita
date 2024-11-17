@@ -12,6 +12,7 @@ class Player : public Model
 
 public:
     Player();
+    void ResetPlayer();
     ~Player() = default;
     inline const int GetShotProjectiles() { return mShotProjectiles; }
     inline void SetShotProjectiles(const int pShotProj) { mShotProjectiles = pShotProj; }

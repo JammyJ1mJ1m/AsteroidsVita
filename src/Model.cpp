@@ -8,17 +8,17 @@
 void Model::CheckBounds()
 {
     // loops the object to opposite side of screen
-    if (mPosition->GetX() < -50)
-        mPosition->SetX(SCREEN_WIDTH + 50);
+    if (mPosition.GetX() < -50)
+        mPosition.SetX(SCREEN_WIDTH + 50);
 
-    if (mPosition->GetY() < -50)
-        mPosition->SetY(SCREEN_HEIGHT + 50);
+    if (mPosition.GetY() < -50)
+        mPosition.SetY(SCREEN_HEIGHT + 50);
 
-    if (mPosition->GetX() > SCREEN_WIDTH + 50)
-        mPosition->SetX(-50);
+    if (mPosition.GetX() > SCREEN_WIDTH + 50)
+        mPosition.SetX(-50);
 
-    if (mPosition->GetY() > SCREEN_HEIGHT + 50)
-        mPosition->SetY(-50);
+    if (mPosition.GetY() > SCREEN_HEIGHT + 50)
+        mPosition.SetY(-50);
 }
 
 SDL_Point Model::rotatePoint(SDL_Point point, Vector2f *pivot, double angle)
@@ -94,8 +94,8 @@ void Model::Draw(Renderer *pRenderer)
     for (const auto &vertex : mVerts)
     {
         SDL_Point rotated = rotatePoint(vertex, &modelCenter, mRotAngle);
-        rotated.x = mPosition->GetX() + rotated.x * mScale;
-        rotated.y = mPosition->GetY() + rotated.y * mScale;
+        rotated.x = mPosition.GetX() + rotated.x * mScale;
+        rotated.y = mPosition.GetY() + rotated.y * mScale;
         rotatedVertices.push_back(rotated);
     }
 
@@ -111,8 +111,8 @@ void Model::Draw(Renderer *pRenderer)
 
 void Model::Update(const float pDeltaTime)
 {
-    mPosition->SetX(mPosition->GetX() + mVelocity->GetX());
-    mPosition->SetY(mPosition->GetY() + mVelocity->GetY());
+    mPosition.SetX(mPosition.GetX() + mVelocity->GetX());
+    mPosition.SetY(mPosition.GetY() + mVelocity->GetY());
 
     ApplyFriction(mFriction);
     CheckBounds();
@@ -121,5 +121,4 @@ void Model::Update(const float pDeltaTime)
 Model::~Model()
 {
     delete mVelocity;
-    delete mPosition;
 }

@@ -17,11 +17,9 @@
 #include "Asteroid.h"
 #include "Projectile.h"
 
-struct Star
-{
-    Vector2f pos;
-    Vector3f col;
-};
+#include "Managers/SceneManager.h"
+
+
 
 struct Directions
 {
@@ -38,15 +36,13 @@ struct Directions
 
 class App
 {
+    SceneManager *mSceneManager;
+
     Directions mDirections;
 
     Vector3f *mColour;
     Player *mPlayer;
 
-    std::vector<Asteroid *> mAsteroids;
-
-
-std::vector<Projectile*> mProjectiles;
 
 
     Renderer *mRenderer;
@@ -77,20 +73,21 @@ std::vector<Projectile*> mProjectiles;
 
     Button *Select;
 
+std::vector<Button*> mButtons;
+
     TextRenderer *textRenderer;
 
-    bool mIsDebug;
 
     float stickVal;
-    int indexer;
-    std::vector<Star> mBGStars;
+    
+    static App *theGame; // Static instance pointer
 
 public:
+    static App *GetApp() { return theGame; }
     App();
-    void CreateAsteroids();
     ~App();
-    void run(const float pDeltaTime);          
-    void processInput(); 
+    void run(const float pDeltaTime);
+    void processInput();
     void SetColour(float r, float g, float b)
     {
         mRenderer->GetColour()->SetX(r);
@@ -99,5 +96,12 @@ public:
     }
     const bool GetRunning() { return mIsRunning; }
     void handleButtonPress(SceCtrlData &padData);
-    void CheckCollisions();
+    TextRenderer* GetTextRenderer() {return textRenderer; };
+    Renderer* GetRenderer() {return mRenderer; };
+    Player* GetPlayer() { return mPlayer; }
+    void QuitApp() { mIsRunning = false; }
+    SceneManager* GetSceneManager() { return mSceneManager;}
+    
+    // sets all the button states back to being unpressed
+    void ResetButtonStates();
 };

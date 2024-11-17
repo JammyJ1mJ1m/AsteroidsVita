@@ -5,6 +5,8 @@
 class Asteroid : public Model
 {
     int mLives;
+Vector2f SetRandomSpawnPosition(float centerX, float centerY, float radius);
+
 public:
     Asteroid();
     ~Asteroid() = default;

@@ -23,7 +23,7 @@ class Model
 
 protected:
   std::vector<SDL_Point> mVerts;
-  Vector2f *mPosition;
+  Vector2f mPosition;
   float mScale;
   float mRotAngle;
   Vector2f *mVelocity;
@@ -40,8 +40,8 @@ public:
   const float GetMaxSpeed() { return mMaxSpeed; }
   inline void SetScale(const float pScale) { mScale = pScale; }
   inline const float GetScale() { return mScale; }
-  Vector2f &GetPos() { return *mPosition; }
-  void SetPosition(Vector2f pPos) { mPosition = new Vector2f(pPos.GetX(), pPos.GetY()); }
+  Vector2f &GetPos() { return mPosition; }
+  void SetPosition(Vector2f pPos) { mPosition = Vector2f(pPos.GetX(), pPos.GetY()); }
   void SetRotation(const float pAngle);
   const float GetRotation() { return mRotAngle; }
   Vector2f GetForwardVector() const;

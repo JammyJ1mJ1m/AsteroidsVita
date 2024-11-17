@@ -38,3 +38,17 @@ const bool Button::CheckButtonDown(SceCtrlData &padData)
     // Return false if the button is not pressed or already processed
     return false;
 }
+
+const bool Button::CheckKeyUp(SceCtrlData &padData)
+{
+    CheckButtonDown(padData);
+    // Detect button release event (was previously pressed, now not pressed)
+    if (!(padData.buttons & mKey) && mIsPressed)
+    {
+        mIsPressed = false; // Mark the button as released
+        return true;        // Key up event detected
+    }
+
+    // If the button is not in the released state, return false
+    return false;
+}

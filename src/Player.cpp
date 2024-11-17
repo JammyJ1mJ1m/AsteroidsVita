@@ -15,13 +15,18 @@ Player::Player()
     mVerts.push_back({0, 75});     // middle (slightly above bottom center)
     mVerts.push_back({100, 100});
     mFriction = 0.98f;
-
-    mPosition = new Vector2f(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
-    mRotAngle = 0;
+    mColliderRadius = 10;
     mMaxSpeed = 5;
+
+    ResetPlayer();
+}
+
+void Player::ResetPlayer()
+{
+    mPosition = Vector2f(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+    mRotAngle = 0;
     mHasExpired = false;
-mColliderRadius = 10;
-mLives = 3;
+    mLives = 3;
     UpdateVelocity(0);
 }
 
@@ -36,12 +41,13 @@ Projectile *Player::ShootProjectile()
 void Player::OnCollision()
 {
     if (mLives > 1)
-    {
         mLives--;
-        SetPosition(Vector2f(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2));
-        delete mVelocity;
-        mVelocity = new Vector2f(0,0);
-    }
+
     else
         SetHasExpired(true);
+
+    SetPosition(Vector2f(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2));
+    delete mVelocity;
+    mVelocity = new Vector2f(0, 0);
+    mShotProjectiles = 0;
 }

@@ -11,7 +11,7 @@ Projectile::Projectile()
     mVerts.push_back({-5, -5});
 
     mFriction = 1;
-    mPosition = new Vector2f(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+    mPosition = Vector2f(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
     mRotAngle = 0;
     mMaxLifeTime = 5;
     mCurrentLifeTime = 0;
@@ -22,8 +22,8 @@ Projectile::Projectile()
 
 void Projectile::Update(const float pDeltaTime)
 {
-    mPosition->SetX(mPosition->GetX() + mVelocity->GetX());
-    mPosition->SetY(mPosition->GetY() + mVelocity->GetY());
+    mPosition.SetX(mPosition.GetX() + mVelocity->GetX());
+    mPosition.SetY(mPosition.GetY() + mVelocity->GetY());
 
     ApplyFriction(mFriction);
     CheckBounds();

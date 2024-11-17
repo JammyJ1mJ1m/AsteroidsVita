@@ -47,6 +47,24 @@ src/Renderer.h
         src/Asteroid.h
         src/Projectile.cpp
         src/Projectile.h
+
+        src/Managers/SceneManager.cpp
+        src/Managers/SceneManager.h
+        
+        src/Scenes/Scene.cpp
+        src/Scenes/Scene.h
+        src/Scenes/GameScene.cpp
+        src/Scenes/GameScene.h
+        src/Scenes/GameOverScene.cpp
+        src/Scenes/GameOverScene.h
+        src/Scenes/GameMenuScene.cpp
+        src/Scenes/GameMenuScene.h
+
+        src/Systems/SystemRender.cpp
+        src/Systems/SystemRender.h
+
+        src/Systems/ISystem.cpp
+        src/Systems/ISystem.h
 )
 
 target_link_libraries(${PROJECT_NAME}

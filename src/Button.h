@@ -1,3 +1,5 @@
+#pragma once
+
 #include <psp2/ctrl.h> // Include the necessary header for user input
 #include <string>
 
@@ -11,9 +13,9 @@ public:
     ~Button() = default;
 
     const int GetKey() { return mKey; }
-    const std::string GetState() { return mIsPressed ? "true" : "false";}
-    void SetKey(const bool pState) { mIsPressed = pState; }
+    const std::string GetState() { return mIsPressed ? "true" : "false"; }
+    void SetState(const bool pState) { mIsPressed = pState; }
     const bool CheckKey(SceCtrlData &padData);
     const bool CheckButtonDown(SceCtrlData &padData);
-    
+    const bool CheckKeyUp(SceCtrlData &padData);
 };
