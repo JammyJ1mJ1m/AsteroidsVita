@@ -60,6 +60,9 @@ src/Renderer.h
         src/Scenes/GameMenuScene.cpp
         src/Scenes/GameMenuScene.h
 
+        src/Scenes/ControlsScene.cpp
+        src/Scenes/ControlsScene.h
+
         src/Systems/SystemRender.cpp
         src/Systems/SystemRender.h
 
@@ -109,6 +112,7 @@ SceHid_stub
 SceSysmodule_stub
 SceTouch_stub
 SceMotion_stub
+
 
             m
             stdc++

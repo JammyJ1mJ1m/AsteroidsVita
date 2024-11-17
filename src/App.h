@@ -19,70 +19,48 @@
 
 #include "Managers/SceneManager.h"
 
+// struct Directions
+// {
+//     Vector2f up;    // (0, -1)
+//     Vector2f down;  // (0, 1)
+//     Vector2f left;  // (-1, 0)
+//     Vector2f right; // (1, 0)
 
-
-struct Directions
-{
-    Vector2f up;    // (0, -1)
-    Vector2f down;  // (0, 1)
-    Vector2f left;  // (-1, 0)
-    Vector2f right; // (1, 0)
-
-    Directions()
-        : up(0, -1), down(0, 1), left(-1, 0), right(1, 0)
-    {
-    }
-};
+//     Directions()
+//         : up(0, -1), down(0, 1), left(-1, 0), right(1, 0)
+//     {
+//     }
+// };
 
 class App
 {
     SceneManager *mSceneManager;
 
-    Directions mDirections;
+    // Directions mDirections;
 
-    Vector3f *mColour;
+    // Vector3f *mColour;
     Player *mPlayer;
-
-
 
     Renderer *mRenderer;
 
     SDL_GameController *controller;
     bool mIsRunning;
-    std::vector<Vector3f *> mColours;
-    int colourIndex;
-    Uint8 previousButtonState;
-    bool wasCrossPressed;
-    bool wasCirclePressed;
+    // std::vector<Vector3f *> mColours;
+    // int colourIndex;
 
-    // shape buttons
-    Button *xButton;
-    Button *oButton;
-    Button *triButton;
-    Button *squButton;
-
-    // bumpers
-    // Button *L1Button;
-    // Button *R1Button;
-
-    // Dpad btns
-    Button *DLButton;
-    Button *DRButton;
-    Button *DUButton;
-    Button *DDButton;
-
-    Button *Select;
-
-std::vector<Button*> mButtons;
+    std::vector<Button *> mButtons;
 
     TextRenderer *textRenderer;
 
+    // float stickVal;
 
-    float stickVal;
-    
     static App *theGame; // Static instance pointer
+    int mHighScore;
+    int LoadHighscore();
+    bool SaveHighscore(const int pScore);
 
 public:
+    const int GetHighScore() const { return mHighScore; };
     static App *GetApp() { return theGame; }
     App();
     ~App();
@@ -96,12 +74,12 @@ public:
     }
     const bool GetRunning() { return mIsRunning; }
     void handleButtonPress(SceCtrlData &padData);
-    TextRenderer* GetTextRenderer() {return textRenderer; };
-    Renderer* GetRenderer() {return mRenderer; };
-    Player* GetPlayer() { return mPlayer; }
+    TextRenderer *GetTextRenderer() { return textRenderer; };
+    Renderer *GetRenderer() { return mRenderer; };
+    Player *GetPlayer() { return mPlayer; }
     void QuitApp() { mIsRunning = false; }
-    SceneManager* GetSceneManager() { return mSceneManager;}
-    
+    SceneManager *GetSceneManager() { return mSceneManager; }
+
     // sets all the button states back to being unpressed
     void ResetButtonStates();
 };

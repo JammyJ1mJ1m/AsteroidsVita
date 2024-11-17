@@ -38,5 +38,8 @@ void GameOverScene::Render(Renderer *pRenderer, const float pDeltaTime)
 {
     SDL_Color textColor = {200, 50, 50};
 
-    App::GetApp()->GetTextRenderer()->renderText("GAME OVER!!", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, textColor, true);
+    App::GetApp()->GetTextRenderer()->renderText("GAME OVER!", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, textColor, true);
+    textColor = {200, 200, 200};
+
+    App::GetApp()->GetTextRenderer()->renderText("Press o to go back to menu", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 150, textColor, true);
 }

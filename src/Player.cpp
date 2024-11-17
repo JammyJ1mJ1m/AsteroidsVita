@@ -46,8 +46,25 @@ void Player::OnCollision()
     else
         SetHasExpired(true);
 
+    mTimeAlive = 0.0f;
     SetPosition(Vector2f(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2));
     delete mVelocity;
     mVelocity = new Vector2f(0, 0);
     mShotProjectiles = 0;
+}
+
+void Player::Update(const float pDelta)
+{
+    mPosition.SetX(mPosition.GetX() + mVelocity->GetX());
+    mPosition.SetY(mPosition.GetY() + mVelocity->GetY());
+
+    ApplyFriction(mFriction);
+    CheckBounds();
+
+    mTimeAlive += pDelta;
+    if(mTimeAlive >= 60.0f && ( mLives < 3 && mLives > 0) )
+    {
+        mTimeAlive = 0.0f;
+        mLives++;
+    }
 }

@@ -4,9 +4,17 @@
 #include "Scenes/GameOverScene.h"
 #include "Scenes/GameMenuScene.h"
 
+// For saving to disk
+#include <psp2/io/dirent.h>
+#include <psp2/io/stat.h>
+#include <psp2/io/fcntl.h>
+#include <stdio.h>
+#include <string.h>
+#define FILE_PATH "ux0:data/AsteroidsVita/highscore.txt"
+
 App *App::theGame = nullptr;
 
-App::App() : wasCrossPressed(false)
+App::App()
 {
     mIsRunning = true;
     theGame = this;
@@ -19,30 +27,15 @@ App::App() : wasCrossPressed(false)
 
     mButtons.push_back(new Button(SCE_CTRL_CROSS));
 
-    // xButton = new Button(SCE_CTRL_CROSS);
     mButtons.push_back(new Button(SCE_CTRL_CIRCLE));
-    // oButton = new Button(SCE_CTRL_CIRCLE);
     mButtons.push_back(new Button(SCE_CTRL_TRIANGLE));
-    // triButton = new Button(SCE_CTRL_TRIANGLE);
     mButtons.push_back(new Button(SCE_CTRL_SQUARE));
-    // squButton = new Button(SCE_CTRL_SQUARE);
-
-    // L1Button = new Button(SCE_CTRL_L1);
-    // R1Button = new Button(SCE_CTRL_R1);
     mButtons.push_back(new Button(SCE_CTRL_R1));
-
-    // Dpad btns
     mButtons.push_back(new Button(SCE_CTRL_LEFT));
-    // DLButton = new Button(SCE_CTRL_LEFT);
     mButtons.push_back(new Button(SCE_CTRL_RIGHT));
-    // DRButton = new Button(SCE_CTRL_RIGHT);
     mButtons.push_back(new Button(SCE_CTRL_UP));
-    // DUButton = new Button(SCE_CTRL_UP);
     mButtons.push_back(new Button(SCE_CTRL_DOWN));
-    // DDButton = new Button(SCE_CTRL_DOWN);
-
     mButtons.push_back(new Button(SCE_CTRL_SELECT));
-    // Select = new Button(SCE_CTRL_SELECT);
 
     textRenderer = new TextRenderer(mRenderer->GetRenderer(), "res/Orbitron-Regular.ttf", 24);
 
@@ -50,6 +43,9 @@ App::App() : wasCrossPressed(false)
     // mSceneManager->PushScene(new GameScene());
     // mSceneManager->PushScene(new GameOverScene());
     mSceneManager->PushScene(new GameMenuScene());
+
+    mHighScore = 0;
+    mHighScore = LoadHighscore();
 }
 
 void App::processInput()
@@ -78,64 +74,59 @@ void App::handleButtonPress(SceCtrlData &padData)
     {
         mSceneManager->OnKeyboard(butt, padData);
     }
-    // if (triButton->CheckButtonDown(padData))
-    // {
-    //     if (mAsteroids.size() > 0)
-    //     {
-    //         indexer++;
-    //         if (indexer > mAsteroids.size())
-    //             indexer = 0;
-    //     }
-    // }
-
-    // if (squButton->CheckButtonDown(padData))
-    // {
-    //     mSceneManager->OnKeyboard(squButton);
-
-    //     // if (mPlayer->GetShotProjectiles() >= 5)
-    //     //     return;
-
-    //     // Projectile *proj = mPlayer->ShootProjectile();
-
-    //     // proj->SetPosition(mPlayer->GetPos());
-    //     // proj->SetRotation(mPlayer->GetRotation());
-    //     // proj->UpdateVelocity(10);
-    //     // mProjectiles.push_back(proj);
-    // }
-
-    // if (DLButton->CheckKey(padData))
-    //     mSceneManager->OnKeyboard(DLButton);
-    // //     mPlayer->SetRotation(mPlayer->GetRotation() - 3);
-
-    // if (DRButton->CheckKey(padData))
-    //     mSceneManager->OnKeyboard(DRButton);
-
-    // //     mPlayer->SetRotation(mPlayer->GetRotation() + 3);
-
-    // if (xButton->CheckKey(padData))
-    //     mSceneManager->OnKeyboard(xButton);
-
-    // mPlayer->SetSpeed(1);
-
-    // if (Select->CheckButtonDown(padData))
-    // mIsDebug = !mIsDebug;
-
-    // if (oButton->CheckButtonDown(padData))
-    //     mIsRunning = false;
 }
 
-// Function to draw a circle using the midpoint circle algorithm
+int App::LoadHighscore()
+{
+    SceUID file = sceIoOpen(FILE_PATH, SCE_O_RDONLY, 0777);
+    if (file < 0)
+    {
+        printf("Failed to open file for reading. Returning 0 as default high score.\n");
+        return 0; 
+    }
+
+    char buffer[32] = {0};
+    sceIoRead(file, buffer, sizeof(buffer) - 1);
+
+    sceIoClose(file);
+
+    return atoi(buffer);
+}
+
+bool App::SaveHighscore(const int pScore)
+{
+    // We need to create a directory if it does not exist
+    sceIoMkdir("ux0:data/AsteroidsVita", 0777);
+
+    SceUID file = sceIoOpen(FILE_PATH, SCE_O_WRONLY | SCE_O_CREAT, 0777);
+    if (file < 0)
+    {
+        return false;
+    }
+
+    char buffer[32];
+    snprintf(buffer, sizeof(buffer), "%d", pScore);
+
+    sceIoWrite(file, buffer, strlen(buffer));
+
+    sceIoClose(file);
+    return true;
+}
 
 void App::run(const float pDeltaTime)
 {
-    SDL_Color textColor = {255, 255, 255};
-    textRenderer->renderText("Hallo welt!", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, textColor, true);
     processInput();
     mRenderer->Render();
-
+    mSceneManager->Update(pDeltaTime);
     mSceneManager->Render(mRenderer, pDeltaTime);
-
     mRenderer->EndRender();
+
+    if (!mIsRunning)
+    {
+        int score = mPlayer->GetScore();
+        if (score > mHighScore)
+            SaveHighscore(mPlayer->GetScore());
+    }
 }
 
 App::~App()
@@ -148,19 +139,6 @@ App::~App()
         delete butt;
     }
 
-    // delete xButton;
-    // delete oButton;
-    // delete triButton;
-    // delete squButton;
-    // delete DLButton;
-    // delete DRButton;
-    // delete DUButton;
-    // delete DDButton;
-
-    // delete Select;
-
     delete textRenderer;
-    delete mColour;
-
     delete mRenderer;
 }

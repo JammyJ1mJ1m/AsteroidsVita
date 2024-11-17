@@ -27,6 +27,7 @@ GameScene::~GameScene()
 /// </summary>
 void GameScene::Initialise()
 {
+	mIsDebug = false;
 	mPlayer = App::GetApp()->GetPlayer();
 
 	indexer = 0;
@@ -80,6 +81,58 @@ void GameScene::OnKeyboard(Button *pButton, SceCtrlData &padData)
 
 void GameScene::Update(double deltaTime)
 {
+	mPlayer->Update(deltaTime);
+
+	for (auto &asteroid : mAsteroids)
+	{
+		asteroid->Update(deltaTime);
+	}
+	for (auto &proj : mProjectiles)
+	{
+		if (proj->GetCurrentLifeTime() >= proj->GetMaxLifeTime())
+		{
+			proj->SetHasExpired(true);
+			continue;
+		}
+		proj->Update(deltaTime);
+	}
+	CheckCollisions();
+
+	// Cleanup unused projectiles
+	for (size_t i = mProjectiles.size(); i-- > 0;)
+	{
+		if (mProjectiles[i]->GetHasExpired())
+		{
+			if (--indexer == -1)
+				indexer = 0;
+			Projectile *tempProj = mProjectiles[i];
+			mProjectiles.erase(mProjectiles.begin() + i);
+			delete tempProj;
+			mPlayer->SetShotProjectiles(mPlayer->GetShotProjectiles() - 1);
+		}
+	}
+
+	for (size_t i = mAsteroids.size(); i-- > 0;)
+	{
+		if (mAsteroids[i]->GetHasExpired())
+		{
+			Asteroid *tempAsteroid = mAsteroids[i];
+			mAsteroids.erase(mAsteroids.begin() + i);
+			delete tempAsteroid;
+		}
+	}
+
+	// pRenderer->EndRender();
+	if (mAsteroids.size() == 0)
+	{
+		CreateAsteroids(mAsteroidLevel++);
+	}
+	if (mPlayer->GetHasExpired())
+	{
+		mSceneManager->PopScene();
+		mSceneManager->PushScene(new GameOverScene());
+		mPlayer->ResetPlayer();
+	}
 }
 
 void DrawCircle(SDL_Renderer *renderer, int centerX, int centerY, int radius)
@@ -129,7 +182,6 @@ void GameScene::Render(Renderer *pRenderer, const float pDeltaTime)
 
 #pragma region Main rendering
 
-	mPlayer->Update(pDeltaTime);
 	mPlayer->Draw(pRenderer);
 	if (mIsDebug)
 		DrawCircle(pRenderer->GetRenderer(), mPlayer->GetPos().GetX(), mPlayer->GetPos().GetY(), mPlayer->GetColliderRadius());
@@ -142,7 +194,7 @@ void GameScene::Render(Renderer *pRenderer, const float pDeltaTime)
 			SDL_SetRenderDrawColor(pRenderer->GetRenderer(), 255, 0, 255, 255);
 		if (mIsDebug)
 			DrawCircle(pRenderer->GetRenderer(), mAsteroids[i]->GetPos().GetX(), mAsteroids[i]->GetPos().GetY(), mAsteroids[i]->GetColliderRadius());
-		mAsteroids[i]->Update(pDeltaTime);
+
 		mAsteroids[i]->Draw(pRenderer);
 	}
 
@@ -151,15 +203,9 @@ void GameScene::Render(Renderer *pRenderer, const float pDeltaTime)
 		SDL_SetRenderDrawColor(pRenderer->GetRenderer(), 255, 0, 0, 255);
 		if (mIsDebug)
 			DrawCircle(pRenderer->GetRenderer(), proj->GetPos().GetX(), proj->GetPos().GetY(), proj->GetColliderRadius());
-		if (proj->GetCurrentLifeTime() >= proj->GetMaxLifeTime())
-		{
-			proj->SetHasExpired(true);
-			continue;
-		}
-		proj->Update(pDeltaTime);
+
 		proj->Draw(pRenderer);
 	}
-	CheckCollisions();
 
 	for (auto &star : mBGStars)
 	{
@@ -181,80 +227,6 @@ void GameScene::Render(Renderer *pRenderer, const float pDeltaTime)
 	int lives = mPlayer->GetLives();
 	textRenderer->renderText(std::to_string(score).c_str(), 10, 10, textColor);
 	textRenderer->renderText(std::to_string(lives).c_str(), SCREEN_WIDTH / 2, 10, textColor);
-
-#pragma region Debug printing
-	// if (mIsDebug)
-	// {
-	// 	std::string dtstr = "dt: " + std::to_string(pDeltaTime);
-	// 	textRenderer->renderText(dtstr.c_str(), 50, 50, textColor);
-
-	// 	textRenderer->renderText(xButton->GetState().c_str(), 50, 100, textColor);
-	// 	float x = mPlayer->GetPos().GetX();
-	// 	float y = mPlayer->GetPos().GetY();
-	// 	std::string t1 = "Pos: " + std::to_string(x) + " : " + std::to_string(y);
-	// 	textRenderer->renderText(t1.c_str(), 50, 150, textColor);
-
-	// 	float r = mPlayer->GetRotation();
-	// 	std::string t2 = "Rot: " + std::to_string(r);
-	// 	textRenderer->renderText(t2.c_str(), 50, 200, textColor);
-
-	// 	SDL_SetRenderDrawColor(pRenderer->GetRenderer(), 255, 0, 255, 255);
-	// 	SDL_RenderDrawPoint(pRenderer->GetRenderer(), static_cast<int>(x), static_cast<int>(y)); // Convert to integer since pixel coordinates are integers
-
-	// 	std::string count = "count: " + std::to_string(mProjectiles.size());
-	// 	textRenderer->renderText(count.c_str(), 50, 250, textColor);
-
-	// 	if (mAsteroids.size() > 0)
-	// 	{
-	// 		int exp = mAsteroids[indexer]->GetLives();
-
-	// 		std::string t3 = "lives: " + std::to_string(exp);
-	// 		textRenderer->renderText(t3.c_str(), 50, 300, textColor);
-
-	// 		float timer = mAsteroids[indexer]->GetScale();
-	// 		std::string t4 = "scale: " + std::to_string(timer);
-	// 		textRenderer->renderText(t4.c_str(), 50, 350, textColor);
-	// 	}
-	// 	std::string indexerer = "index: " + std::to_string(indexer);
-	// 	textRenderer->renderText(indexerer.c_str(), 50, 400, textColor);
-	// }
-#pragma endregion
-
-	// Cleanup unused projectiles
-	for (size_t i = mProjectiles.size(); i-- > 0;)
-	{
-		if (mProjectiles[i]->GetHasExpired())
-		{
-			if (--indexer == -1)
-				indexer = 0;
-			Projectile *tempProj = mProjectiles[i];
-			mProjectiles.erase(mProjectiles.begin() + i);
-			delete tempProj;
-			mPlayer->SetShotProjectiles(mPlayer->GetShotProjectiles() - 1);
-		}
-	}
-
-	for (size_t i = mAsteroids.size(); i-- > 0;)
-	{
-		if (mAsteroids[i]->GetHasExpired())
-		{
-			Asteroid *tempAsteroid = mAsteroids[i];
-			mAsteroids.erase(mAsteroids.begin() + i);
-			delete tempAsteroid;
-		}
-	}
-
-	// pRenderer->EndRender();
-	if (mAsteroids.size() == 0)
-	{
-		CreateAsteroids(mAsteroidLevel++);
-	}
-	if(mPlayer->GetHasExpired())
-	{
-		mSceneManager->PopScene();
-		mSceneManager->PushScene(new GameOverScene());
-		mPlayer->ResetPlayer();
-	}
 }
 
 void GameScene::CheckCollisions()
@@ -269,43 +241,43 @@ void GameScene::CheckCollisions()
 			Vector2f difference = proj->GetPos() - asteroid->GetPos();
 			float distance = difference.Length();
 
-			if (distance < proj->GetColliderRadius() + asteroid->GetColliderRadius())
+			if (distance > proj->GetColliderRadius() + asteroid->GetColliderRadius())
+				continue; // No collisions happening, iterate to next set
+
+			if (asteroid->GetLives() > 1)
 			{
-				if (asteroid->GetLives() > 1)
+				for (size_t i = 0; i < 2; i++)
 				{
-					for (size_t i = 0; i < 2; i++)
-					{
-						Asteroid *ast = new Asteroid;
-						ast->SetScale(asteroid->GetScale() - 0.25f);
-						ast->SetColliderRadius(asteroid->GetColliderRadius() * asteroid->GetScale());
-						ast->SetPosition(asteroid->GetPos());
-						ast->SetLives(asteroid->GetLives() - 1);
-						tempAsteroids.push_back(ast);
-					}
+					Asteroid *ast = new Asteroid;
+					ast->SetScale(asteroid->GetScale() - 0.25f);
+					ast->SetColliderRadius(asteroid->GetColliderRadius() * asteroid->GetScale());
+					ast->SetPosition(asteroid->GetPos());
+					ast->SetLives(asteroid->GetLives() - 1);
+					tempAsteroids.push_back(ast);
 				}
-				proj->OnCollision();
-				asteroid->OnCollision();
+			}
+			proj->OnCollision();
+			asteroid->OnCollision();
 
-				// first - 20
-				// second - 50
-				// third  -100
-				switch (asteroid->GetLives())
-				{
-				case 2:
-					mPlayer->SetScore(mPlayer->GetScore() + 50);
-					/* code */
-					break;
-				case 1:
-					mPlayer->SetScore(mPlayer->GetScore() + 100);
+			// first - 20
+			// second - 50
+			// third  -100
+			switch (asteroid->GetLives())
+			{
+			case 2:
+				mPlayer->SetScore(mPlayer->GetScore() + 50);
+				/* code */
+				break;
+			case 1:
+				mPlayer->SetScore(mPlayer->GetScore() + 100);
 
-					/* code */
-					break;
+				/* code */
+				break;
 
-				default:
-					mPlayer->SetScore(mPlayer->GetScore() + 20);
+			default:
+				mPlayer->SetScore(mPlayer->GetScore() + 20);
 
-					break;
-				}
+				break;
 			}
 		}
 	}
@@ -337,7 +309,6 @@ void GameScene::CheckCollisions()
 			mProjectiles.clear();
 
 			// reset to normal
-			mAsteroidLevel = 4;
 			CreateAsteroids(mAsteroidLevel);
 		}
 	}

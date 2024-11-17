@@ -9,6 +9,7 @@ class Player : public Model
     int mShotProjectiles;
     int mScore;
     int mLives;
+    float mTimeAlive;
 
 public:
     Player();
@@ -21,4 +22,5 @@ public:
     inline const int GetLives() { return mLives; }
     Projectile *ShootProjectile();
     void OnCollision() override;
+    void Update(const float pDelta) override;
 };
