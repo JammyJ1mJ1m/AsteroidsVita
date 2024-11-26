@@ -5,6 +5,7 @@
 #include "Asteroid.h"
 #include "Renderer.h"
 #include <cmath>
+#include "Managers/AudioManager.h"
 
 Asteroid::Asteroid()
 {
@@ -91,4 +92,5 @@ Vector2f Asteroid::SetRandomSpawnPosition(float centerX, float centerY, float ra
 void Asteroid::OnCollision()
 {
     SetHasExpired(true);
+    AudioManager::GetInstance().PlayAudio("ex");
 }

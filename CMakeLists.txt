@@ -9,7 +9,7 @@ if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
   endif()
 endif()
 
-project(redrectangle)
+project(asteroids)
 include("${VITASDK}/share/vita.cmake" REQUIRED)
 
 find_package(SDL2 REQUIRED)
@@ -68,10 +68,13 @@ src/Renderer.h
 
         src/Systems/ISystem.cpp
         src/Systems/ISystem.h
+
+        src/Managers/AudioManager.h
+        src/Managers/AudioManager.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}
-
+pthread
 jsoncpp
 box2d
 
@@ -102,6 +105,7 @@ freetype
             bz2
             xmp
 
+
 SceAudio_stub
 SceAudioIn_stub
 SceCommonDialog_stub
@@ -119,7 +123,7 @@ SceMotion_stub
             c
 )
 
-# target_link_libraries(redrectangle PRIVATE /usr/local/vitasdk/arm-vita-eabi/lib/libpng.a /usr/local/vitasdk/arm-vita-eabi/lib/libz.a)
+# target_link_libraries(asteroids PRIVATE /usr/local/vitasdk/arm-vita-eabi/lib/libpng.a /usr/local/vitasdk/arm-vita-eabi/lib/libz.a)
 
 
 vita_create_self(${PROJECT_NAME}.self ${PROJECT_NAME})
@@ -131,4 +135,5 @@ vita_create_vpk(${PROJECT_NAME}.vpk ${VITA_TITLEID} ${PROJECT_NAME}.self
   FILE sce_sys/livearea/contents/startup.png sce_sys/livearea/contents/startup.png
   FILE sce_sys/livearea/contents/template.xml sce_sys/livearea/contents/template.xml
   FILE res/Orbitron-Regular.ttf res/Orbitron-Regular.ttf  # Include font in VPK
+  FILE res/Explosion.wav res/Explosion.wav
 )

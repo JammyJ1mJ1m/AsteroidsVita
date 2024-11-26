@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <string.h>
 #define FILE_PATH "ux0:data/AsteroidsVita/highscore.txt"
+#include "Managers/AudioManager.h"
 
 App *App::theGame = nullptr;
 
@@ -46,6 +47,8 @@ App::App()
 
     mHighScore = 0;
     mHighScore = LoadHighscore();
+
+    AudioManager::GetInstance().LoadWav("ex", "app0:/res/Explosion.wav");
 }
 
 void App::processInput()
