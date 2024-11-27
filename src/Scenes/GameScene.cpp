@@ -223,10 +223,9 @@ void GameScene::Render(Renderer *pRenderer, const float pDeltaTime)
 	// SDL_RenderDrawLine(pRenderer->GetRenderer(), SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1, 0, SCREEN_HEIGHT - 1); // Line from bottom-right to bottom-left
 #pragma endregion
 
-	int score = mPlayer->GetScore();
-	int lives = mPlayer->GetLives();
-	textRenderer->renderText(std::to_string(score).c_str(), 10, 10, textColor);
-	textRenderer->renderText(std::to_string(lives).c_str(), SCREEN_WIDTH / 2, 10, textColor);
+
+	textRenderer->renderText(std::to_string(mPlayer->GetScore()).c_str(), 10, 10, textColor);
+	textRenderer->renderText(std::to_string(mPlayer->GetLives()).c_str(), SCREEN_WIDTH / 2, 10, textColor);
 }
 
 void GameScene::CheckCollisions()

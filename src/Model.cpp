@@ -60,10 +60,10 @@ void Model::UpdateVelocity(float speed)
 {
     Vector2f forward = GetForwardVector();
 
-    mVelocity->SetX(mVelocity->GetX() + forward.GetX() * speed);
-    mVelocity->SetY(mVelocity->GetY() + forward.GetY() * speed);
+    mVelocity.SetX(mVelocity.GetX() + forward.GetX() * speed);
+    mVelocity.SetY(mVelocity.GetY() + forward.GetY() * speed);
 
-    mVelocity->ClampLength(mMaxSpeed);
+    mVelocity.ClampLength(mMaxSpeed);
 }
 
 void Model::SetSpeed(const float pSpeed)
@@ -75,8 +75,8 @@ void Model::SetSpeed(const float pSpeed)
 void Model::ApplyFriction(const float pFric)
 {
 
-    mVelocity->SetX(mVelocity->GetX() * pFric);
-    mVelocity->SetY(mVelocity->GetY() * pFric);
+    mVelocity.SetX(mVelocity.GetX() * pFric);
+    mVelocity.SetY(mVelocity.GetY() * pFric);
 }
 
 void Model::Draw(Renderer *pRenderer)
@@ -111,14 +111,14 @@ void Model::Draw(Renderer *pRenderer)
 
 void Model::Update(const float pDeltaTime)
 {
-    mPosition.SetX(mPosition.GetX() + mVelocity->GetX());
-    mPosition.SetY(mPosition.GetY() + mVelocity->GetY());
+    mPosition.SetX(mPosition.GetX() + mVelocity.GetX());
+    mPosition.SetY(mPosition.GetY() + mVelocity.GetY());
 
     ApplyFriction(mFriction);
     CheckBounds();
 }
 
 Model::~Model()
-{
-    delete mVelocity;
+{ 
+    
 }

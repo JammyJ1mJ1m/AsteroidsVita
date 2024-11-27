@@ -26,7 +26,7 @@ protected:
   Vector2f mPosition;
   float mScale;
   float mRotAngle;
-  Vector2f *mVelocity;
+  Vector2f mVelocity;
   float mSpeed;
   float mFriction;
   float mMaxSpeed;

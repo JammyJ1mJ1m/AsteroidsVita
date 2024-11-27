@@ -10,6 +10,7 @@ class Player : public Model
     int mScore;
     int mLives;
     float mTimeAlive;
+    bool SaveHighscore();
 
 public:
     Player();

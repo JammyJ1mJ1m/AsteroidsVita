@@ -96,25 +96,7 @@ int App::LoadHighscore()
     return atoi(buffer);
 }
 
-bool App::SaveHighscore(const int pScore)
-{
-    // We need to create a directory if it does not exist
-    sceIoMkdir("ux0:data/AsteroidsVita", 0777);
 
-    SceUID file = sceIoOpen(FILE_PATH, SCE_O_WRONLY | SCE_O_CREAT, 0777);
-    if (file < 0)
-    {
-        return false;
-    }
-
-    char buffer[32];
-    snprintf(buffer, sizeof(buffer), "%d", pScore);
-
-    sceIoWrite(file, buffer, strlen(buffer));
-
-    sceIoClose(file);
-    return true;
-}
 
 void App::run(const float pDeltaTime)
 {
@@ -124,12 +106,12 @@ void App::run(const float pDeltaTime)
     mSceneManager->Render(mRenderer, pDeltaTime);
     mRenderer->EndRender();
 
-    if (!mIsRunning)
-    {
-        int score = mPlayer->GetScore();
-        if (score > mHighScore)
-            SaveHighscore(mPlayer->GetScore());
-    }
+    // if (!mIsRunning)
+    // {
+    //     int score = mPlayer->GetScore();
+    //     if (score > mHighScore)
+    //         SaveHighscore(mPlayer->GetScore());
+    // }
 }
 
 App::~App()

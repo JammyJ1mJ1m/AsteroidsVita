@@ -57,7 +57,6 @@ class App
     static App *theGame; // Static instance pointer
     int mHighScore;
     int LoadHighscore();
-    bool SaveHighscore(const int pScore);
 
 public:
     const int GetHighScore() const { return mHighScore; };

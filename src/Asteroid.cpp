@@ -10,7 +10,7 @@
 Asteroid::Asteroid()
 {
     mScale = 1.0f;
-    mVelocity = new Vector2f(0, 0);
+    mVelocity = Vector2f(0, 0);
 
     int asID = rand() % 3;
 

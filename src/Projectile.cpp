@@ -4,7 +4,7 @@
 Projectile::Projectile()
 {
     mScale = 1.0f;
-    mVelocity = new Vector2f(0, 0);
+    mVelocity = Vector2f(0, 0);
     mVerts.push_back({-5, 5});
     mVerts.push_back({5, 5});
     mVerts.push_back({5, -5});
@@ -22,8 +22,8 @@ Projectile::Projectile()
 
 void Projectile::Update(const float pDeltaTime)
 {
-    mPosition.SetX(mPosition.GetX() + mVelocity->GetX());
-    mPosition.SetY(mPosition.GetY() + mVelocity->GetY());
+    mPosition.SetX(mPosition.GetX() + mVelocity.GetX());
+    mPosition.SetY(mPosition.GetY() + mVelocity.GetY());
 
     ApplyFriction(mFriction);
     CheckBounds();
