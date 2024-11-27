@@ -49,8 +49,6 @@ void GameScene::Initialise()
 
 void GameScene::OnKeyboard(Button *pButton, SceCtrlData &padData)
 {
-	// SCE_CTRL_CROSS
-
 	if (pButton->GetKey() == SCE_CTRL_R1 && pButton->CheckKey(padData))
 	{
 		// move logic

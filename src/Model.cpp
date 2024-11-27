@@ -7,18 +7,19 @@
 
 void Model::CheckBounds()
 {
+    const int screenSafeArea = 25;
     // loops the object to opposite side of screen
-    if (mPosition.GetX() < -50)
-        mPosition.SetX(SCREEN_WIDTH + 50);
+    if (mPosition.GetX() < -screenSafeArea)
+        mPosition.SetX(SCREEN_WIDTH + screenSafeArea);
 
-    if (mPosition.GetY() < -50)
-        mPosition.SetY(SCREEN_HEIGHT + 50);
+    if (mPosition.GetY() < -screenSafeArea)
+        mPosition.SetY(SCREEN_HEIGHT + screenSafeArea);
 
-    if (mPosition.GetX() > SCREEN_WIDTH + 50)
-        mPosition.SetX(-50);
+    if (mPosition.GetX() > SCREEN_WIDTH + screenSafeArea)
+        mPosition.SetX(-screenSafeArea);
 
-    if (mPosition.GetY() > SCREEN_HEIGHT + 50)
-        mPosition.SetY(-50);
+    if (mPosition.GetY() > SCREEN_HEIGHT + screenSafeArea)
+        mPosition.SetY(-screenSafeArea);
 }
 
 SDL_Point Model::rotatePoint(SDL_Point point, Vector2f *pivot, double angle)
@@ -120,5 +121,5 @@ void Model::Update(const float pDeltaTime)
 
 Model::~Model()
 { 
-    
+
 }

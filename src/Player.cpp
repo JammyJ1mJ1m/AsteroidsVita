@@ -2,6 +2,7 @@
 // Created by james on 11/7/24.
 //
 
+#include "App.h"
 #include "Player.h"
 #include "Renderer.h"
 #include "Projectile.h"
@@ -61,7 +62,7 @@ void Player::OnCollision()
 
     mTimeAlive = 0.0f;
     SetPosition(Vector2f(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2));
-    
+
     mVelocity = Vector2f(0, 0);
     mShotProjectiles = 0;
 }
@@ -75,7 +76,7 @@ void Player::Update(const float pDelta)
     CheckBounds();
 
     mTimeAlive += pDelta;
-    if(mTimeAlive >= 60.0f && ( mLives < 3 && mLives > 0) )
+    if (mTimeAlive >= 60.0f && (mLives < 3 && mLives > 0))
     {
         mTimeAlive = 0.0f;
         mLives++;
@@ -84,6 +85,9 @@ void Player::Update(const float pDelta)
 
 bool Player::SaveHighscore()
 {
+    if (App::GetApp()->GetHighScore() > GetScore())
+        return false;
+
     // We need to create a directory if it does not exist
     sceIoMkdir("ux0:data/AsteroidsVita", 0777);
 
@@ -99,5 +103,6 @@ bool Player::SaveHighscore()
     sceIoWrite(file, buffer, strlen(buffer));
 
     sceIoClose(file);
+    App::GetApp()->SetHighScore(mScore);
     return true;
 }

@@ -60,6 +60,7 @@ class App
 
 public:
     const int GetHighScore() const { return mHighScore; };
+    void SetHighScore(const int pScore) { mHighScore = pScore; };
     static App *GetApp() { return theGame; }
     App();
     ~App();
